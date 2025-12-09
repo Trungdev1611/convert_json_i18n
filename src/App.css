@@ -1,0 +1,17 @@
+/* Row colors for LogTable */
+.updated-row {
+  background-color: #fff7e6 !important; /* Màu cam nhạt cảnh báo */
+}
+
+.updated-row:hover {
+  background-color: #ffe7ba !important; /* Màu cam đậm hơn khi hover */
+}
+
+.added-row {
+  background-color: #f6ffed !important; /* Màu xanh lá nhạt nhẹ nhàng */
+}
+
+.added-row:hover {
+  background-color: #d9f7be !important; /* Màu xanh lá đậm hơn khi hover */
+}
+
