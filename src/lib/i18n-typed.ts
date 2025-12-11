@@ -22,13 +22,13 @@ import type { TranslationKey } from '@/types/translations';
  * }
  * ```
  */
-export function useTypedTranslations(namespace?: string) {
+export function useTypedTranslations(_namespace?: string) {
   // Note: Actual implementation depends on your i18n library
   // For Next.js Intl, you would do:
   // const t = useTranslations(namespace);
   // return (key: TranslationKey, values?: Record<string, any>) => t(key as any, values);
   
-  return (key: TranslationKey, values?: Record<string, any>): string => {
+  return (_key: TranslationKey, _values?: Record<string, any>): string => {
     // Placeholder - replace with actual implementation
     return '';
   };
@@ -59,7 +59,7 @@ export function createTypedT<T extends (key: string, values?: Record<string, any
 /**
  * Type guard để check nếu string là valid translation key
  */
-export function isValidTranslationKey(key: string): key is TranslationKey {
+export function isValidTranslationKey(_key: string): _key is TranslationKey {
   // This is a type guard - actual implementation would check against keys
   return true;
 }
