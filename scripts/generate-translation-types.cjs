@@ -81,6 +81,21 @@ ${keys.map(key => `  | '${key}'`).join('\n')};
 // Union type for easier use
 export type TranslationKeyUnion = ${keys.map(key => `'${key}'`).join(' | ')};
 
+// Module augmentation cho react-i18next (tự động gợi ý khi dùng useTranslation)
+declare module 'react-i18next' {
+  interface CustomTypeOptions {
+    defaultNS: 'translation';
+    resources: {
+      translation: Record<TranslationKey, string>;
+    };
+  }
+}
+
+// Module augmentation cho next-intl (tự động gợi ý khi dùng useTranslations)
+declare module 'next-intl' {
+  interface Messages extends Record<TranslationKey, string> {}
+}
+
 ${config.namespace ? `
 declare module '${config.namespace}' {
   interface Messages {

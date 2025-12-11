@@ -8,7 +8,10 @@ Công cụ quản lý và đồng bộ translations cho các dự án đa ngôn 
 - 📊 **Upload Excel File**: Upload file Excel để merge translations mới vào JSON trong localStorage
 - 🔍 **Tự động phát hiện thay đổi**: Tự động phân biệt key mới (added) và key đã cập nhật (updated)
 - 📋 **Bảng thay đổi**: Hiển thị bảng với màu sắc phân biệt cho các thay đổi
+- 🚀 **Download Tất Cả Files Cho Project Mới**: Tự động download 4 files (en.json, jp.json, malay.json, translations.d.ts) cùng lúc - **Không cần Node.js!**
 - 💾 **Download JSON**: Tải xuống từng file riêng hoặc tất cả trong 1 file
+- 📘 **TypeScript Type Definition**: Download type definitions đã được generate từ localStorage
+- 🔧 **Export cho CI/CD**: Export JSON files để dùng với script Node.js trong CI/CD
 - 🎨 **Giao diện đẹp**: Sử dụng Ant Design và Tailwind CSS
 
 ## 🚀 Cài đặt
@@ -75,12 +78,86 @@ npm run preview
   - 🟢 **Màu xanh lá**: Key mới được thêm (added)
 - Các key không thay đổi sẽ không được hiển thị
 
-### Bước 4: Download JSON Files
+### Bước 4: Download Files Cho Project Mới (Khuyến nghị)
+
+**✨ Workflow đơn giản nhất:**
 
 1. Click button **"Chọn loại download"** trên card Download JSON Files
-2. Chọn một trong các options:
-   - **Download All**: Tải xuống 1 file chứa cả 3 ngôn ngữ (`all_translations.json`)
-   - **Download từng file riêng**: Tải xuống EN.json, JP.json, hoặc Malay.json
+2. Chọn **"Download Tất Cả Files Cho Project Mới"** (button đầu tiên, màu xanh lá)
+3. Tool sẽ tự động download **4 files**:
+   - `en.json` → Copy vào `src/translate/en.json`
+   - `jp.json` → Copy vào `src/translate/jp.json`
+   - `malay.json` → Copy vào `src/translate/malay.json`
+   - `translations.d.ts` → Copy vào `src/types/translations.d.ts`
+4. Copy các files vào project mới và dùng ngay!
+
+**✅ Ưu điểm:**
+- Không cần Node.js
+- Không cần chạy script
+- Tất cả files đã được generate sẵn
+- Copy và dùng ngay trong project mới
+
+### Bước 5: Download Các Loại Khác (Tùy chọn)
+
+Nếu bạn chỉ cần một số files cụ thể:
+
+1. **Download All**: Tải xuống 1 file chứa cả 3 ngôn ngữ (`all_translations.json`)
+2. **Download từng file riêng**: Tải xuống EN.json, JP.json, hoặc Malay.json
+3. **Export cho CI/CD**: Tải xuống `en.json`, `jp.json`, `malay.json` để dùng với script Node.js trong CI/CD
+
+### Bước 6: Generate TypeScript Types (Tùy chọn - Đã có trong Bước 4)
+
+Nếu bạn đã dùng **Bước 4** (Download Tất Cả Files), bạn đã có sẵn `translations.d.ts` rồi, không cần làm bước này!
+
+Nếu bạn muốn generate lại hoặc tự động hóa, có **2 cách độc lập**:
+
+#### ✨ Cách 1: Generate trực tiếp từ localStorage (Khuyến nghị - Không cần Node.js)
+
+**Luồng flow:**
+1. Upload JSON/Excel → Dữ liệu lưu vào **localStorage**
+2. Click button **"Download translations.d.ts (Từ localStorage - Không cần Node.js)"**
+3. Tool tự động:
+   - Đọc từ localStorage
+   - Flatten nested keys
+   - Generate file `translations.d.ts`
+   - Download về máy
+4. Copy file vào `src/types/translations.d.ts` trong project
+5. Sử dụng ngay:
+   ```typescript
+   import type { TranslationKey } from '@/types/translations';
+   const key: TranslationKey = 'home_title'; // ✅ Auto-complete
+   ```
+
+**✅ Ưu điểm:**
+- Không cần Node.js
+- Không cần chạy script
+- Nhanh, đơn giản
+- Hoạt động trực tiếp trong browser
+
+#### 🔧 Cách 2: Generate từ file JSON bằng script Node.js (Cho CI/CD)
+
+**Luồng flow:**
+1. Upload JSON/Excel → Dữ liệu lưu vào **localStorage**
+2. Click button **"Export JSON Files (en.json, jp.json, malay.json) - Cho CI/CD"**
+3. Copy 3 file JSON vào `src/translate/` trong project
+4. Chạy script:
+   ```bash
+   node scripts/generate-translation-types.cjs
+   ```
+5. File `src/types/translations.d.ts` được tạo tự động
+
+**✅ Ưu điểm:**
+- Tự động hóa trong GitHub Actions / CI/CD
+- Version control JSON files trong repo
+- Tích hợp vào build process
+
+**📝 Lưu ý:**
+- **2 cách này HOÀN TOÀN ĐỘC LẬP** - bạn chỉ cần chọn 1 cách
+- Cách 1: Dùng khi làm việc thủ công, không cần automation
+- Cách 2: Dùng khi cần tự động hóa trong CI/CD (như GitHub Actions)
+- GitHub Actions workflow vẫn cần script Node.js vì không có localStorage trong server environment
+
+Xem thêm chi tiết trong [`scripts/README.md`](./scripts/README.md).
 
 ## 📊 Format Excel
 
