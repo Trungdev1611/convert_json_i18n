@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: npm install   
 
+      - name: Generate translation types
+        run: node scripts/generate-translation-types.cjs
+
       - name: Build project
         run: npm run build
 

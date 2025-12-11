@@ -1,0 +1,10 @@
+{
+  "localesDir": "src/translate",
+  "outputDir": "src/types",
+  "outputFile": "translations.d.ts",
+  "sourceLocale": "en",
+  "locales": ["en", "jp", "malay"],
+  "namespace": null,
+  "enableWatch": false
+}
+

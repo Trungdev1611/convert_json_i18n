@@ -2,7 +2,7 @@
 //người dùng sẽ dowload được 3 file json hoặc 1 file với 3 phần eng, jp và malay
 import { useState } from 'react';
 import { Card, Button, Modal, Space, message, Typography, Divider } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, FileTextOutlined } from '@ant-design/icons';
 import { saveAs } from 'file-saver';
 import { getLanguage, getTranslations } from '../utils/storage';
 
@@ -47,6 +47,44 @@ const DownloadJSONtranslated = () => {
     setIsModalOpen(false);
   };
 
+  const handleDownloadTypeDefinition = () => {
+    const translations = getTranslations();
+    
+    if (!translations) {
+      message.warning('Chưa có dữ liệu trong localStorage!');
+      return;
+    }
+
+    // Generate type definition from current translations in localStorage
+    const enKeys = Object.keys(translations.en || {}).sort();
+    
+    if (enKeys.length === 0) {
+      message.warning('Chưa có translation keys!');
+      return;
+    }
+
+    const typeDefinition = `// Auto-generated file. Do not edit manually.
+// Generated at: ${new Date().toISOString()}
+// Run: node scripts/generate-translation-types.cjs
+
+export type TranslationKey = 
+${enKeys.map(key => `  | '${key}'`).join('\n')};
+
+// Union type for easier use
+export type TranslationKeyUnion = ${enKeys.map(key => `'${key}'`).join(' | ')};
+
+declare global {
+  namespace TranslationKeys {
+    type Key = TranslationKey;
+  }
+}
+`;
+
+    const blob = new Blob([typeDefinition], { type: 'text/typescript;charset=utf-8' });
+    saveAs(blob, 'translations.d.ts');
+    message.success('Đã tải xuống translations.d.ts');
+  };
+
   return (
     <>
       <Card 
@@ -68,9 +106,9 @@ const DownloadJSONtranslated = () => {
         }
       >
         <Paragraph className="text-gray-600 mb-0">
-          <strong>Mô tả:</strong> Tải xuống các file JSON đã được dịch và cập nhật. 
-          Bạn có thể tải xuống từng file riêng lẻ (EN.json, JP.json, Malay.json) hoặc 
-          tải xuống tất cả trong 1 file duy nhất (all_translations.json chứa cả 3 ngôn ngữ).
+          <strong>Mô tả:</strong> Tải xuống các file JSON đã được dịch và cập nhật, hoặc TypeScript type definition. 
+          Bạn có thể tải xuống từng file riêng lẻ (EN.json, JP.json, Malay.json), 
+          tải xuống tất cả trong 1 file (all_translations.json), hoặc download type definition (translations.d.ts) để dùng trong project khác.
         </Paragraph>
       </Card>
 
@@ -138,6 +176,27 @@ const DownloadJSONtranslated = () => {
                 Download Malay.json (Malay)
               </Button>
             </Space>
+          </div>
+
+          <Divider>📘 Type Definition (Cho project khác)</Divider>
+
+          <div>
+            <Text strong className="text-base block mb-2">Download TypeScript Type Definition</Text>
+            <Paragraph className="text-gray-600 text-sm mb-3">
+              Tải xuống file <code className="bg-gray-100 px-1 rounded">translations.d.ts</code> để sử dụng trong project khác. 
+              File này chứa tất cả translation keys với type-safe cho TypeScript, giúp auto-complete và type checking khi code.
+              <br />
+              <strong>Cách dùng:</strong> Copy file vào <code className="bg-gray-100 px-1 rounded">src/types/translations.d.ts</code> trong project mới, sau đó import và sử dụng.
+            </Paragraph>
+            <Button
+              type="default"
+              size="large"
+              icon={<FileTextOutlined />}
+              onClick={handleDownloadTypeDefinition}
+              className="w-full"
+            >
+              📥 Download translations.d.ts
+            </Button>
           </div>
         </Space>
       </Modal>
