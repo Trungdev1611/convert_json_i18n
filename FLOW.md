@@ -88,11 +88,13 @@ Tool có **2 cách độc lập** để generate TypeScript types. Bạn chỉ c
 ### ✨ Cách 1: Generate từ localStorage (Không cần Node.js)
 
 **Khi nào dùng:**
+
 - Làm việc thủ công
 - Không cần automation
 - Muốn nhanh, đơn giản
 
 **Luồng:**
+
 1. Upload JSON/Excel → localStorage
 2. Click button "Download translations.d.ts"
 3. Tool tự động generate và download
@@ -100,6 +102,7 @@ Tool có **2 cách độc lập** để generate TypeScript types. Bạn chỉ c
 5. Done! ✅
 
 **Không cần:**
+
 - ❌ Node.js
 - ❌ Script `generate-translation-types.cjs`
 - ❌ File JSON trong `src/translate/`
@@ -107,12 +110,14 @@ Tool có **2 cách độc lập** để generate TypeScript types. Bạn chỉ c
 ### 🔧 Cách 2: Generate từ file JSON (Cần Node.js)
 
 **Khi nào dùng:**
+
 - Tự động hóa trong GitHub Actions
 - CI/CD pipeline
 - Version control JSON files
 - Tích hợp vào build process
 
 **Luồng:**
+
 1. Upload JSON/Excel → localStorage
 2. Export JSON files → Download `en.json`, `jp.json`, `malay.json`
 3. Copy vào `src/translate/` trong project
@@ -121,6 +126,7 @@ Tool có **2 cách độc lập** để generate TypeScript types. Bạn chỉ c
 6. Done! ✅
 
 **Cần:**
+
 - ✅ Node.js
 - ✅ Script `generate-translation-types.cjs`
 - ✅ File JSON trong `src/translate/`
@@ -128,11 +134,13 @@ Tool có **2 cách độc lập** để generate TypeScript types. Bạn chỉ c
 ## 🤔 Tại sao GitHub Actions vẫn cần script Node.js?
 
 GitHub Actions chạy trên server (Ubuntu), không có:
+
 - ❌ Browser
 - ❌ localStorage
 - ❌ DOM API
 
 Vì vậy, GitHub Actions workflow phải:
+
 1. Đọc từ file JSON trong repo (`src/translate/en.json`)
 2. Chạy script Node.js để generate types
 3. Build project với types đã generate
@@ -140,23 +148,22 @@ Vì vậy, GitHub Actions workflow phải:
 ```yaml
 # .github/workflows/deploy_githubpage.yml
 - name: Generate translation types
-  run: node scripts/generate-translation-types.cjs  # ← Cần script này
+  run: node scripts/generate-translation-types.cjs # ← Cần script này
 ```
 
 ## 📝 Tóm Tắt
 
-| Tiêu chí | Cách 1 (localStorage) | Cách 2 (File JSON + Script) |
-|----------|----------------------|----------------------------|
-| **Cần Node.js?** | ❌ Không | ✅ Có |
-| **Cần script?** | ❌ Không | ✅ Có |
-| **Tốc độ** | ⚡ Nhanh | 🐢 Chậm hơn (cần export + copy) |
-| **Tự động hóa** | ❌ Không | ✅ Có (CI/CD) |
-| **Version control** | ❌ Không | ✅ Có (JSON files trong repo) |
-| **Khuyến nghị** | ✅ Cho manual work | ✅ Cho automation |
+| Tiêu chí            | Cách 1 (localStorage) | Cách 2 (File JSON + Script)     |
+| ------------------- | --------------------- | ------------------------------- |
+| **Cần Node.js?**    | ❌ Không              | ✅ Có                           |
+| **Cần script?**     | ❌ Không              | ✅ Có                           |
+| **Tốc độ**          | ⚡ Nhanh              | 🐢 Chậm hơn (cần export + copy) |
+| **Tự động hóa**     | ❌ Không              | ✅ Có (CI/CD)                   |
+| **Version control** | ❌ Không              | ✅ Có (JSON files trong repo)   |
+| **Khuyến nghị**     | ✅ Cho manual work    | ✅ Cho automation               |
 
 ## 💡 Kết Luận
 
 - **Nếu bạn chỉ cần types cho project hiện tại:** Dùng **Cách 1** (không cần Node.js)
 - **Nếu bạn cần tự động hóa trong CI/CD:** Dùng **Cách 2** (cần script Node.js)
 - **GitHub Actions luôn cần Cách 2** vì không có localStorage
-

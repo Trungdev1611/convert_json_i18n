@@ -5,6 +5,7 @@
 ### Bước 1: Upload Excel File
 
 1. Chuẩn bị file Excel với format:
+
    ```
    English              | Japanese            | Malay
    Home Title           | ホームタイトル        | Tajuk Utama
@@ -31,6 +32,7 @@
 ### Bước 3: Copy Vào Project Mới
 
 **📝 Lưu ý quan trọng:**
+
 - **File JSON** (`en.json`, `jp.json`, `malay.json`) có thể copy vào **bất kỳ đâu** trong project (vị trí không ảnh hưởng đến auto-complete)
 - **File `translations.d.ts`** phải copy vào thư mục `types` (hoặc thư mục được include trong `tsconfig.json`)
 
@@ -72,13 +74,13 @@ import { useTranslation } from 'react-i18next';
 
 function MyComponent() {
   const { t } = useTranslation();
-  
+
   return (
     <div>
       {/* ✅ Auto-complete khi gõ t('h → gợi ý home_title, welcome_message, etc. */}
       <h1>{t('home_title')}</h1>
       <p>{t('welcome_message')}</p>
-      
+
       {/* ❌ Type error nếu key không tồn tại */}
       {/* <p>{t('invalid_key')}</p> */}
     </div>
@@ -94,7 +96,7 @@ import { useTranslations } from 'next-intl';
 
 export default function MyComponent() {
   const t = useTranslations();
-  
+
   return (
     <div>
       {/* ✅ Auto-complete khi gõ t('h → gợi ý home_title, welcome_message, etc. */}
@@ -110,11 +112,13 @@ export default function MyComponent() {
 ## ✅ Hoàn Thành!
 
 Bạn đã có:
+
 - ✅ 3 file JSON translations (en, jp, malay)
 - ✅ TypeScript type definitions
 - ✅ Auto-complete và type checking trong code
 
 **Không cần:**
+
 - ❌ Node.js
 - ❌ Chạy script
 - ❌ Cấu hình phức tạp
@@ -124,4 +128,3 @@ Bạn đã có:
 - Nếu bạn cần tự động hóa trong CI/CD, xem thêm [`README.md`](./README.md) phần "Generate TypeScript Types - Cách 2"
 - File `translations.d.ts` đã được generate sẵn từ localStorage, không cần chạy script Node.js
 - Tất cả files đã sẵn sàng để copy vào project mới và dùng ngay!
-

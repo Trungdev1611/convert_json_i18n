@@ -13,4 +13,3 @@ export interface ChangeRecord {
   oldJp?: string;
   oldMalay?: string;
 }
-

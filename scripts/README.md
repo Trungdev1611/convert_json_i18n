@@ -12,13 +12,13 @@ Script tự động generate TypeScript types từ JSON translation files.
 
 ```json
 {
-  "localesDir": "src/translate",        // Đường dẫn đến folder chứa JSON files
-  "outputDir": "src/types",             // Folder output cho type definitions
-  "outputFile": "translations.d.ts",    // Tên file output
-  "sourceLocale": "en",                 // Locale dùng làm source
-  "locales": ["en", "jp", "malay"],     // Danh sách locales
-  "namespace": "next-intl",             // Namespace (next-intl, react-i18next, etc.)
-  "enableWatch": false                  // Enable watch mode
+  "localesDir": "src/translate", // Đường dẫn đến folder chứa JSON files
+  "outputDir": "src/types", // Folder output cho type definitions
+  "outputFile": "translations.d.ts", // Tên file output
+  "sourceLocale": "en", // Locale dùng làm source
+  "locales": ["en", "jp", "malay"], // Danh sách locales
+  "namespace": "next-intl", // Namespace (next-intl, react-i18next, etc.)
+  "enableWatch": false // Enable watch mode
 }
 ```
 
@@ -67,19 +67,22 @@ Chỉnh sửa `config.json`:
 
 ### Namespace là gì?
 
-Namespace được dùng để **extend type definitions** của thư viện i18n. 
+Namespace được dùng để **extend type definitions** của thư viện i18n.
 
 **Khi nào cần:**
+
 - Khi thư viện i18n có sẵn type definitions và bạn muốn extend chúng
 - Khi bạn muốn type-safe cho các hàm translation của thư viện
 
 **Khi nào KHÔNG cần:**
+
 - Khi bạn chỉ dùng `TranslationKey` type trực tiếp (như hầu hết các trường hợp)
 - Khi thư viện i18n không có type definitions sẵn
 
 **Ví dụ:**
 
 Với namespace `next-intl`, script sẽ generate:
+
 ```typescript
 declare module 'next-intl' {
   interface Messages {
@@ -89,6 +92,7 @@ declare module 'next-intl' {
 ```
 
 Nhưng thực tế, bạn chỉ cần dùng:
+
 ```typescript
 import type { TranslationKey } from '@/types/translations';
 const key: TranslationKey = 'home_title'; // ✅
@@ -133,6 +137,7 @@ Thêm vào `package.json`:
 ## 🎯 Ví dụ Config cho các Framework
 
 ### Next.js Intl
+
 ```json
 {
   "localesDir": "src/translate",
@@ -144,6 +149,7 @@ Thêm vào `package.json`:
 ```
 
 ### React i18next
+
 ```json
 {
   "localesDir": "public/locales",
@@ -155,6 +161,7 @@ Thêm vào `package.json`:
 ```
 
 ### Vue i18n
+
 ```json
 {
   "localesDir": "locales",
@@ -170,6 +177,7 @@ Thêm vào `package.json`:
 ### Error: Source locale file not found
 
 Kiểm tra:
+
 1. File JSON có tồn tại không?
 2. Đường dẫn trong `config.json` đúng chưa?
 3. File có đúng format JSON không?

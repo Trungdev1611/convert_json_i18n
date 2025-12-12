@@ -47,9 +47,11 @@ export const getLanguage = (lang: Language): TranslationData => {
 export const hasInitialData = (): boolean => {
   const translations = getTranslations();
   if (!translations) return false;
-  return Object.keys(translations.en).length > 0 || 
-         Object.keys(translations.jp).length > 0 || 
-         Object.keys(translations.malay).length > 0;
+  return (
+    Object.keys(translations.en).length > 0 ||
+    Object.keys(translations.jp).length > 0 ||
+    Object.keys(translations.malay).length > 0
+  );
 };
 
 // Xóa tất cả dữ liệu trong localStorage
@@ -85,4 +87,3 @@ export const clearUndoSnapshot = (): void => {
 export const canUndo = (): boolean => {
   return getUndoSnapshot() !== null;
 };
-

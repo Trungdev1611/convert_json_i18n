@@ -1,0 +1,22 @@
+echo "🔍 Running pre-commit checks..."
+
+# TypeScript
+npm run type-check
+TS=$?
+
+# ESLint
+npm run lint
+LINT=$?
+
+# Prettier
+npm run prettier-check
+PRETTIER=$?
+
+# Kiểm tra lỗi
+if [ $TS -ne 0 ] || [ $LINT -ne 0 ] || [ $PRETTIER -ne 0 ]; then
+  echo "❌ Pre-commit failed"
+  exit 1
+fi
+
+echo "✅ Pre-commit passed"
+exit 0

@@ -26,15 +26,15 @@ const StatisticsCard = () => {
   const totalUniqueKeys = enKeys.length;
 
   // Đếm keys có đầy đủ 3 ngôn ngữ
-  const completeKeys = enKeys.filter(key => 
-    translations.jp[key] && translations.malay[key]
+  const completeKeys = enKeys.filter(
+    (key) => translations.jp[key] && translations.malay[key]
   ).length;
 
   // Đếm keys thiếu translation
   const incompleteKeys = totalUniqueKeys - completeKeys;
 
   return (
-    <Card 
+    <Card
       title="📊 Thống Kê Dữ Liệu"
       style={{
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
@@ -80,25 +80,13 @@ const StatisticsCard = () => {
       </Row>
       <Row gutter={16} style={{ marginTop: '16px' }}>
         <Col xs={8} sm={8} md={4}>
-          <Statistic
-            title="English"
-            value={enKeys.length}
-            valueStyle={{ fontSize: '16px' }}
-          />
+          <Statistic title="English" value={enKeys.length} valueStyle={{ fontSize: '16px' }} />
         </Col>
         <Col xs={8} sm={8} md={4}>
-          <Statistic
-            title="Japanese"
-            value={jpKeys.length}
-            valueStyle={{ fontSize: '16px' }}
-          />
+          <Statistic title="Japanese" value={jpKeys.length} valueStyle={{ fontSize: '16px' }} />
         </Col>
         <Col xs={8} sm={8} md={4}>
-          <Statistic
-            title="Malay"
-            value={malayKeys.length}
-            valueStyle={{ fontSize: '16px' }}
-          />
+          <Statistic title="Malay" value={malayKeys.length} valueStyle={{ fontSize: '16px' }} />
         </Col>
       </Row>
     </Card>
@@ -106,4 +94,3 @@ const StatisticsCard = () => {
 };
 
 export default StatisticsCard;
-

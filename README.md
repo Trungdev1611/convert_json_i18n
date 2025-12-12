@@ -92,6 +92,7 @@ npm run preview
 4. Copy các files vào project mới và dùng ngay!
 
 **✅ Ưu điểm:**
+
 - Không cần Node.js
 - Không cần chạy script
 - Tất cả files đã được generate sẵn
@@ -114,6 +115,7 @@ Nếu bạn muốn generate lại hoặc tự động hóa, có **2 cách độc
 #### ✨ Cách 1: Generate trực tiếp từ localStorage (Khuyến nghị - Không cần Node.js)
 
 **Luồng flow:**
+
 1. Upload JSON/Excel → Dữ liệu lưu vào **localStorage**
 2. Click button **"Download translations.d.ts (Từ localStorage - Không cần Node.js)"**
 3. Tool tự động:
@@ -129,6 +131,7 @@ Nếu bạn muốn generate lại hoặc tự động hóa, có **2 cách độc
    ```
 
 **✅ Ưu điểm:**
+
 - Không cần Node.js
 - Không cần chạy script
 - Nhanh, đơn giản
@@ -137,6 +140,7 @@ Nếu bạn muốn generate lại hoặc tự động hóa, có **2 cách độc
 #### 🔧 Cách 2: Generate từ file JSON bằng script Node.js (Cho CI/CD)
 
 **Luồng flow:**
+
 1. Upload JSON/Excel → Dữ liệu lưu vào **localStorage**
 2. Click button **"Export JSON Files (en.json, jp.json, malay.json) - Cho CI/CD"**
 3. Copy 3 file JSON vào `src/translate/` trong project
@@ -147,11 +151,13 @@ Nếu bạn muốn generate lại hoặc tự động hóa, có **2 cách độc
 5. File `src/types/translations.d.ts` được tạo tự động
 
 **✅ Ưu điểm:**
+
 - Tự động hóa trong GitHub Actions / CI/CD
 - Version control JSON files trong repo
 - Tích hợp vào build process
 
 **📝 Lưu ý:**
+
 - **2 cách này HOÀN TOÀN ĐỘC LẬP** - bạn chỉ cần chọn 1 cách
 - Cách 1: Dùng khi làm việc thủ công, không cần automation
 - Cách 2: Dùng khi cần tự động hóa trong CI/CD (như GitHub Actions)
@@ -200,11 +206,13 @@ Welcome Message      | ようこそメッセージ
 ### Tạo Key tự động
 
 Key sẽ được tạo tự động từ cột **English**:
+
 - "Home Title" → `home_title`
 - "Welcome Message" → `welcome_message`
 - "Login Button" → `login_button`
 
 **Quy tắc tạo key:**
+
 - Chuyển sang chữ thường
 - Thay khoảng trắng bằng dấu gạch dưới (`_`)
 - Loại bỏ ký tự đặc biệt
@@ -245,6 +253,7 @@ i18n-tool/
 Dữ liệu được lưu trữ trong **localStorage** của browser với key `i18n_translations`.
 
 Cấu trúc dữ liệu:
+
 ```json
 {
   "en": {
@@ -276,5 +285,7 @@ Mọi đóng góp đều được chào đón! Vui lòng tạo issue hoặc pull
 ## 📄 License
 
 MIT
+
 # convert_json_i18n
+
 # convert_json_i18n

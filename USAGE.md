@@ -27,7 +27,7 @@ import type { TranslationKey } from '@/types/translations';
 
 export default function HomePage() {
   const t = useTranslations();
-  
+
   return (
     <div>
       {/* Type assertion */}
@@ -50,7 +50,7 @@ import type { TranslationKey } from '@/types/translations';
 
 export function useTypedTranslations(namespace?: string) {
   const t = useTranslations(namespace);
-  
+
   return (key: TranslationKey, values?: Record<string, any>) => {
     return t(key as any, values);
   };
@@ -66,7 +66,7 @@ import { useTypedTranslations } from '@/lib/i18n-typed';
 
 export default function Component() {
   const t = useTypedTranslations();
-  
+
   return (
     <div>
       <h1>{t('home_title')}</h1> {/* ✅ Auto-complete, type-safe */}
@@ -146,4 +146,3 @@ export const TranslatedText: React.FC<Props> = ({ translationKey }) => {
 - Dùng wrapper function để code gọn hơn
 - Tạo constants cho các nhóm keys liên quan
 - Chạy `node scripts/generate-translation-types.cjs` sau mỗi lần update JSON
-

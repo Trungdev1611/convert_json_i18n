@@ -7,6 +7,7 @@
 **Có thể copy vào bất kỳ đâu trong project!** Vị trí file JSON không ảnh hưởng đến auto-complete.
 
 Ví dụ:
+
 ```
 project/
 ├── src/
@@ -38,6 +39,7 @@ project/
 ```
 
 Hoặc:
+
 ```
 project/
 ├── types/
@@ -45,12 +47,13 @@ project/
 ```
 
 **Lưu ý:** Đảm bảo `tsconfig.json` có include thư mục chứa `translations.d.ts`:
+
 ```json
 {
   "compilerOptions": {
     // ...
   },
-  "include": ["src", "types"]  // ← Thêm "types" nếu đặt ở root
+  "include": ["src", "types"] // ← Thêm "types" nếu đặt ở root
 }
 ```
 
@@ -72,13 +75,13 @@ import { useTranslation } from 'react-i18next';
 
 function MyComponent() {
   const { t } = useTranslation();
-  
+
   return (
     <div>
       {/* ✅ Auto-complete khi gõ t('h */}
       <h1>{t('home_title')}</h1>
       <p>{t('welcome_message')}</p>
-      
+
       {/* ❌ Type error nếu key không tồn tại */}
       {/* <p>{t('invalid_key')}</p> */}
     </div>
@@ -87,6 +90,7 @@ function MyComponent() {
 ```
 
 **Khi gõ `t('h`, VS Code sẽ tự động gợi ý:**
+
 - `home_title`
 - `welcome_message`
 - ... (tất cả keys bắt đầu bằng 'h')
@@ -99,7 +103,7 @@ import { useTranslations } from 'next-intl';
 
 export default function MyComponent() {
   const t = useTranslations();
-  
+
   return (
     <div>
       {/* ✅ Auto-complete khi gõ t('h */}
@@ -122,7 +126,7 @@ import type { TranslationKey } from '@/types/translations';
 
 export function useTypedTranslation() {
   const { t } = useTranslation(); // Thay bằng hook của bạn
-  
+
   return (key: TranslationKey, values?: Record<string, any>) => {
     return t(key, values);
   };
@@ -163,8 +167,8 @@ t('home_title' as TranslationKey); // ✅ Auto-complete khi gõ
 ## 🎯 Kết Quả
 
 Sau khi setup đúng, bạn sẽ có:
+
 - ✅ Auto-complete khi gõ `t('h` → gợi ý `home_title`, `welcome_message`, etc.
 - ✅ Type error nếu key không tồn tại
 - ✅ Refactor-safe: Khi đổi tên key, TypeScript sẽ báo lỗi ở tất cả nơi dùng
 - ✅ Hover để xem type definition
-

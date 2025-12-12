@@ -1,4 +1,4 @@
-import { Card, Table, Tag, Space, Statistic, Typography, Alert, Tooltip, Collapse } from 'antd';
+import { Card, Table, Tag, Space, Statistic, Typography, Tooltip, Collapse } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { ChangeRecord } from '../utils/types';
 
@@ -11,7 +11,7 @@ interface LogTableProps {
 const LogTable = ({ changes }: LogTableProps) => {
   // Lọc bỏ những key không thay đổi và sắp xếp: updated trước, added sau
   const filteredChanges = changes
-    .filter(c => c.status !== 'unchanged')
+    .filter((c) => c.status !== 'unchanged')
     .sort((a, b) => {
       // Updated trước, Added sau
       if (a.status === 'updated' && b.status === 'added') return -1;
@@ -20,40 +20,63 @@ const LogTable = ({ changes }: LogTableProps) => {
     });
 
   // Render cell với cảnh báo cho updated
-  const renderCellWithUpdate = (record: ChangeRecord, field: 'en' | 'jp' | 'malay', newValue: string) => {
+  const renderCellWithUpdate = (
+    record: ChangeRecord,
+    field: 'en' | 'jp' | 'malay',
+    newValue: string
+  ) => {
     if (record.status === 'updated') {
-      const oldValue = record[`old${field.charAt(0).toUpperCase() + field.slice(1)}` as 'oldEn' | 'oldJp' | 'oldMalay'];
+      const oldValue =
+        record[
+          `old${field.charAt(0).toUpperCase() + field.slice(1)}` as 'oldEn' | 'oldJp' | 'oldMalay'
+        ];
       const hasChanged = oldValue !== undefined && oldValue !== newValue;
-      
+
       if (hasChanged) {
         return (
           <Tooltip
             title={
               <div style={{ color: '#000' }}>
                 <div style={{ marginBottom: '12px' }}>
-                  <Text strong style={{ color: '#ff4d4f', display: 'block', marginBottom: '4px' }}>Dữ liệu cũ:</Text>
-                  <div style={{ 
-                    marginTop: '4px', 
-                    padding: '8px', 
-                    background: '#fff1f0', 
-                    borderRadius: '4px',
-                    border: '1px solid #ffccc7',
-                    color: '#000'
-                  }}>
-                    {oldValue ? <span style={{ color: '#000' }}>{oldValue}</span> : <span style={{ color: '#999' }}>(trống)</span>}
+                  <Text strong style={{ color: '#ff4d4f', display: 'block', marginBottom: '4px' }}>
+                    Dữ liệu cũ:
+                  </Text>
+                  <div
+                    style={{
+                      marginTop: '4px',
+                      padding: '8px',
+                      background: '#fff1f0',
+                      borderRadius: '4px',
+                      border: '1px solid #ffccc7',
+                      color: '#000',
+                    }}
+                  >
+                    {oldValue ? (
+                      <span style={{ color: '#000' }}>{oldValue}</span>
+                    ) : (
+                      <span style={{ color: '#999' }}>(trống)</span>
+                    )}
                   </div>
                 </div>
                 <div>
-                  <Text strong style={{ color: '#52c41a', display: 'block', marginBottom: '4px' }}>Dữ liệu mới:</Text>
-                  <div style={{ 
-                    marginTop: '4px', 
-                    padding: '8px', 
-                    background: '#f6ffed', 
-                    borderRadius: '4px',
-                    border: '1px solid #b7eb8f',
-                    color: '#000'
-                  }}>
-                    {newValue ? <span style={{ color: '#000' }}>{newValue}</span> : <span style={{ color: '#999' }}>(trống)</span>}
+                  <Text strong style={{ color: '#52c41a', display: 'block', marginBottom: '4px' }}>
+                    Dữ liệu mới:
+                  </Text>
+                  <div
+                    style={{
+                      marginTop: '4px',
+                      padding: '8px',
+                      background: '#f6ffed',
+                      borderRadius: '4px',
+                      border: '1px solid #b7eb8f',
+                      color: '#000',
+                    }}
+                  >
+                    {newValue ? (
+                      <span style={{ color: '#000' }}>{newValue}</span>
+                    ) : (
+                      <span style={{ color: '#999' }}>(trống)</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -62,16 +85,21 @@ const LogTable = ({ changes }: LogTableProps) => {
             overlayStyle={{ maxWidth: '400px' }}
           >
             <div style={{ position: 'relative' }}>
-              <span style={{ color: '#52c41a', fontWeight: 500 }}>{newValue || <span className="text-gray-400">-</span>}</span>
-              <span style={{ 
-                display: 'inline-block', 
-                width: '8px', 
-                height: '8px', 
-                borderRadius: '50%', 
-                background: '#ff4d4f', 
-                marginLeft: '6px',
-                verticalAlign: 'middle'
-              }} title="Đã thay đổi" />
+              <span style={{ color: '#52c41a', fontWeight: 500 }}>
+                {newValue || <span className="text-gray-400">-</span>}
+              </span>
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#ff4d4f',
+                  marginLeft: '6px',
+                  verticalAlign: 'middle',
+                }}
+                title="Đã thay đổi"
+              />
             </div>
           </Tooltip>
         );
@@ -87,7 +115,9 @@ const LogTable = ({ changes }: LogTableProps) => {
       key: 'key',
       width: 200,
       fixed: 'left',
-      render: (text: string) => <code className="text-xs bg-gray-100 px-2 py-1 rounded">{text}</code>,
+      render: (text: string) => (
+        <code className="text-xs bg-gray-100 px-2 py-1 rounded">{text}</code>
+      ),
     },
     {
       title: 'English',
@@ -126,8 +156,8 @@ const LogTable = ({ changes }: LogTableProps) => {
     },
   ];
 
-  const addedCount = filteredChanges.filter(c => c.status === 'added').length;
-  const updatedCount = filteredChanges.filter(c => c.status === 'updated').length;
+  const addedCount = filteredChanges.filter((c) => c.status === 'added').length;
+  const updatedCount = filteredChanges.filter((c) => c.status === 'updated').length;
 
   // Hàm để set màu cho từng row
   const getRowClassName = (record: ChangeRecord) => {
@@ -140,8 +170,8 @@ const LogTable = ({ changes }: LogTableProps) => {
   };
 
   return (
-    <Card 
-      title="📋 Bảng Thay Đổi" 
+    <Card
+      title="📋 Bảng Thay Đổi"
       className="mb-4"
       style={{
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
@@ -150,9 +180,7 @@ const LogTable = ({ changes }: LogTableProps) => {
       }}
       extra={
         filteredChanges.length > 0 && (
-          <span className="text-gray-500 text-sm">
-            Tổng: {filteredChanges.length} bản ghi
-          </span>
+          <span className="text-gray-500 text-sm">Tổng: {filteredChanges.length} bản ghi</span>
         )
       }
     >
@@ -164,14 +192,15 @@ const LogTable = ({ changes }: LogTableProps) => {
               label: 'ℹ️ Mô tả chức năng',
               children: (
                 <Paragraph className="mb-0 text-sm">
-                  <strong>Hiển thị thay đổi:</strong> Bảng này chỉ hiển thị các key mới được thêm (Added) và các key đã được cập nhật (Updated). 
-                  Các key không thay đổi sẽ không được hiển thị.
+                  <strong>Hiển thị thay đổi:</strong> Bảng này chỉ hiển thị các key mới được thêm
+                  (Added) và các key đã được cập nhật (Updated). Các key không thay đổi sẽ không
+                  được hiển thị.
                   <br />
                   <strong>Trạng thái:</strong>
-                  <br />
-                  • <strong>➕ Added:</strong> Key mới được thêm vào từ file Excel (màu xanh nhẹ)
-                  <br />
-                  • <strong>🔄 Updated:</strong> Key đã tồn tại nhưng giá trị đã được cập nhật (màu cam cảnh báo). Hover vào giá trị để xem dữ liệu cũ và mới.
+                  <br />• <strong>➕ Added:</strong> Key mới được thêm vào từ file Excel (màu xanh
+                  nhẹ)
+                  <br />• <strong>🔄 Updated:</strong> Key đã tồn tại nhưng giá trị đã được cập nhật
+                  (màu cam cảnh báo). Hover vào giá trị để xem dữ liệu cũ và mới.
                 </Paragraph>
               ),
             },

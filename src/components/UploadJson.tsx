@@ -1,6 +1,6 @@
 // 3 phiên bản eng, ja, malay
 //khi upload xong sẽ được lưu vào localstorage
-//để cập nhật dữ liệu mới nhất nếu có vào localstorage- nếu không thì sẽ dùng dữ liệu localstorage- người dùng lựa chọn file eng, jp hay malay 
+//để cập nhật dữ liệu mới nhất nếu có vào localstorage- nếu không thì sẽ dùng dữ liệu localstorage- người dùng lựa chọn file eng, jp hay malay
 import { useState, useRef } from 'react';
 import { Card, Button, Modal, message, Space, Typography, Alert, Collapse } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
@@ -13,20 +13,21 @@ const UploadJson = () => {
   const [status, setStatus] = useState<string>('');
   const [isUploaded, setIsUploaded] = useState(hasInitialData());
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const fileInputRefs = {
-    en: useRef<HTMLInputElement>(null),
-    jp: useRef<HTMLInputElement>(null),
-    malay: useRef<HTMLInputElement>(null),
-  };
+  const fileInputRefEn = useRef<HTMLInputElement>(null);
+  const fileInputRefJp = useRef<HTMLInputElement>(null);
+  const fileInputRefMalay = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = (lang: Language) => {
-    fileInputRefs[lang].current?.click();
+    if (lang === 'en') {
+      fileInputRefEn.current?.click();
+    } else if (lang === 'jp') {
+      fileInputRefJp.current?.click();
+    } else if (lang === 'malay') {
+      fileInputRefMalay.current?.click();
+    }
   };
 
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    lang: Language
-  ) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, lang: Language) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -65,8 +66,8 @@ const UploadJson = () => {
 
   return (
     <>
-      <Card 
-        title="📤 Upload JSON Files" 
+      <Card
+        title="📤 Upload JSON Files"
         className="mb-0"
         style={{
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
@@ -74,11 +75,7 @@ const UploadJson = () => {
           borderRadius: '8px',
         }}
         extra={
-          <Button
-            type="primary"
-            icon={<UploadOutlined />}
-            onClick={() => setIsModalOpen(true)}
-          >
+          <Button type="primary" icon={<UploadOutlined />} onClick={() => setIsModalOpen(true)}>
             Chọn file JSON
           </Button>
         }
@@ -128,12 +125,13 @@ const UploadJson = () => {
       >
         <Space direction="vertical" size="large" className="w-full">
           <Paragraph className="text-gray-600 text-sm mb-0">
-            Chọn file JSON bạn muốn upload. Bạn có thể upload từng file riêng lẻ hoặc upload cả 3 file.
+            Chọn file JSON bạn muốn upload. Bạn có thể upload từng file riêng lẻ hoặc upload cả 3
+            file.
           </Paragraph>
 
           <div>
             <input
-              ref={fileInputRefs.en}
+              ref={fileInputRefEn}
               type="file"
               accept=".json"
               onChange={(e) => handleFileUpload(e, 'en')}
@@ -151,7 +149,7 @@ const UploadJson = () => {
 
           <div>
             <input
-              ref={fileInputRefs.jp}
+              ref={fileInputRefJp}
               type="file"
               accept=".json"
               onChange={(e) => handleFileUpload(e, 'jp')}
@@ -170,7 +168,7 @@ const UploadJson = () => {
 
           <div>
             <input
-              ref={fileInputRefs.malay}
+              ref={fileInputRefMalay}
               type="file"
               accept=".json"
               onChange={(e) => handleFileUpload(e, 'malay')}

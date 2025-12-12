@@ -7,7 +7,10 @@
     "dev": "node scripts/generate-translation-types.cjs && vite",
     "build": "node scripts/generate-translation-types.cjs && tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "prettier-check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "prepare": "husky"
   },
   "dependencies": {
     "antd": "^6.1.0",
@@ -31,6 +34,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "postcss": "^8.5.6",
+    "prettier": "^3.7.4",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
