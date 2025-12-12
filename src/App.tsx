@@ -1,20 +1,79 @@
-import { useState } from 'react';
-import { ConfigProvider, Collapse, Typography } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { useState, useEffect } from 'react';
+import { ConfigProvider, Collapse, Typography, Button, Modal, message, Space } from 'antd';
+import { QuestionCircleOutlined, DeleteOutlined, UndoOutlined } from '@ant-design/icons';
 import UploadJson from './components/UploadJson';
 import UploadExcel from './components/UploadExcel';
 import LogTable from './components/LogTable';
 import DownloadJSONtranslated from './components/DownloadJSONtranslated';
+import StatisticsCard from './components/StatisticsCard';
 import type { ChangeRecord } from './utils/types';
+import { clearTranslations, hasInitialData, getUndoSnapshot, saveTranslations, clearUndoSnapshot, canUndo } from './utils/storage';
 import './App.css';
 
 const { Title, Paragraph, Text } = Typography;
 
 function App() {
   const [changes, setChanges] = useState<ChangeRecord[]>([]);
+  const [canUndoState, setCanUndoState] = useState(false);
+
+  // Check undo availability on mount and when data changes
+  useEffect(() => {
+    setCanUndoState(canUndo());
+  }, [changes]);
 
   const handleChangesDetected = (newChanges: ChangeRecord[]) => {
     setChanges(newChanges);
+    setCanUndoState(canUndo());
+  };
+
+  const handleClearData = () => {
+    if (!hasInitialData()) {
+      message.info('Không có dữ liệu để xóa');
+      return;
+    }
+
+    Modal.confirm({
+      title: '⚠️ Xác nhận xóa dữ liệu',
+      content: (
+        <div>
+          <p>Bạn có chắc chắn muốn xóa tất cả dữ liệu đã lưu không?</p>
+          <p style={{ marginTop: '8px', color: '#ff4d4f' }}>
+            <strong>Hành động này không thể hoàn tác!</strong>
+          </p>
+        </div>
+      ),
+      okText: 'Xóa',
+      okType: 'danger',
+      cancelText: 'Hủy',
+      onOk: () => {
+        clearTranslations();
+        setChanges([]);
+        setCanUndoState(false);
+        message.success('Đã xóa tất cả dữ liệu thành công');
+      },
+    });
+  };
+
+  const handleUndo = () => {
+    const undoSnapshot = getUndoSnapshot();
+    if (!undoSnapshot) {
+      message.warning('Không có thao tác nào để hoàn tác');
+      return;
+    }
+
+    Modal.confirm({
+      title: '↩️ Xác nhận hoàn tác',
+      content: 'Bạn có chắc muốn hoàn tác thao tác vừa rồi?',
+      okText: 'Hoàn tác',
+      cancelText: 'Hủy',
+      onOk: () => {
+        saveTranslations(undoSnapshot);
+        clearUndoSnapshot();
+        setChanges([]);
+        setCanUndoState(false);
+        message.success('Đã hoàn tác thành công');
+      },
+    });
   };
 
   return (
@@ -184,9 +243,11 @@ export default function MyComponent() {
           />
           
           <div className="space-y-4">
-            {/* Upload Section - 2 cards trên 1 dòng */}
-            <div className="flex gap-x-3 border-amber-600 border-2">
+            {/* Upload Section - UploadJson trên 1 hàng, UploadExcel to ra */}
+            <div className="space-y-3">
+              {/* UploadJson - trên 1 hàng */}
               <UploadJson />
+              {/* UploadExcel - to ra, chiếm full width */}
               <UploadExcel onChangesDetected={handleChangesDetected} />
             </div>
 
@@ -194,6 +255,32 @@ export default function MyComponent() {
             <div className='mt-4'>
             <DownloadJSONtranslated />
 
+            </div>
+
+            {/* Statistics Card */}
+            <StatisticsCard />
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-2">
+              {canUndoState && (
+                <Button
+                  type="default"
+                  icon={<UndoOutlined />}
+                  onClick={handleUndo}
+                >
+                  ↩️ Hoàn tác lần cuối
+                </Button>
+              )}
+              {hasInitialData() && (
+                <Button
+                  type="primary"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={handleClearData}
+                >
+                  🗑️ Xóa dữ liệu đã lưu
+                </Button>
+              )}
             </div>
          
             {/* Changes Table - riêng 1 dòng */}

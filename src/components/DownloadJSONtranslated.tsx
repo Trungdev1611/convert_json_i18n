@@ -31,6 +31,17 @@ const flattenKeys = (obj: Record<string, any>, prefix = ''): string[] => {
 
 const DownloadJSONtranslated = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [previewModal, setPreviewModal] = useState<{
+    open: boolean;
+    data: any;
+    fileName: string;
+    type: 'json' | 'typescript';
+  }>({
+    open: false,
+    data: null,
+    fileName: '',
+    type: 'json',
+  });
 
   const handleDownload = (lang: 'en' | 'jp' | 'malay', fileName: string) => {
     const data = getLanguage(lang);
@@ -228,6 +239,81 @@ declare global {
     setIsModalOpen(false);
   };
 
+  // Preview function
+  const handlePreview = (lang: 'en' | 'jp' | 'malay' | 'all' | 'types', fileName: string) => {
+    let data: any = null;
+    let type: 'json' | 'typescript' = 'json';
+
+    if (lang === 'types') {
+      const translations = getTranslations();
+      if (!translations) {
+        message.warning('Chưa có dữ liệu trong localStorage!');
+        return;
+      }
+      const enKeys = flattenKeys(translations.en || {});
+      if (enKeys.length === 0) {
+        message.warning('Chưa có translation keys!');
+        return;
+      }
+      const typeDefinition = `// Auto-generated file. Do not edit manually.
+// Generated at: ${new Date().toISOString()}
+// Generated from: localStorage (Browser)
+
+export type TranslationKey = 
+${enKeys.map(key => `  | '${key}'`).join('\n')};
+
+// Union type for easier use
+export type TranslationKeyUnion = ${enKeys.map(key => `'${key}'`).join(' | ')};
+
+// Module augmentation cho react-i18next
+declare module 'react-i18next' {
+  interface CustomTypeOptions {
+    defaultNS: 'translation';
+    resources: {
+      translation: Record<TranslationKey, string>;
+    };
+  }
+}
+
+// Module augmentation cho next-intl
+declare module 'next-intl' {
+  interface Messages extends Record<TranslationKey, string> {}
+}
+
+declare global {
+  namespace TranslationKeys {
+    type Key = TranslationKey;
+  }
+}`;
+      data = typeDefinition;
+      type = 'typescript';
+    } else if (lang === 'all') {
+      const translations = getTranslations();
+      if (!translations) {
+        message.warning('Chưa có dữ liệu trong localStorage!');
+        return;
+      }
+      data = {
+        en: translations.en,
+        jp: translations.jp,
+        malay: translations.malay
+      };
+    } else {
+      data = getLanguage(lang);
+      if (Object.keys(data).length === 0) {
+        message.warning(`Chưa có dữ liệu ${lang.toUpperCase()} trong localStorage!`);
+        return;
+      }
+    }
+
+    setPreviewModal({
+      open: true,
+      data,
+      fileName,
+      type,
+    });
+  };
+
   return (
     <>
       <Card 
@@ -288,6 +374,9 @@ declare global {
             >
               🚀 Download Tất Cả Files (en.json + jp.json + malay.json + translations.d.ts)
             </Button>
+            <Paragraph className="text-xs text-gray-500 text-center mt-2 mb-0">
+              💡 Lưu ý: Sẽ download 4 files riêng biệt. Để preview, hãy dùng các nút Preview ở các section bên dưới.
+            </Paragraph>
           </div>
 
           <Divider>Hoặc download từng loại riêng</Divider>
@@ -298,16 +387,27 @@ declare global {
               Tải xuống 1 file duy nhất chứa tất cả 3 ngôn ngữ (en, jp, malay) trong cùng một object.
               File này phù hợp khi bạn muốn quản lý tất cả translations trong một nơi.
             </Paragraph>
-            <Button
-              type="primary"
-              size="large"
-              icon={<DownloadOutlined />}
-              onClick={handleDownloadAll}
-              className="w-full"
-              style={{ backgroundColor: '#722ed1', borderColor: '#722ed1' }}
-            >
-              Download All (all_translations.json)
-            </Button>
+            <Space className="w-full" direction="vertical">
+              <Button
+                type="default"
+                size="large"
+                icon={<FileTextOutlined />}
+                onClick={() => handlePreview('all', 'all_translations.json')}
+                className="w-full"
+              >
+                👁️ Preview
+              </Button>
+              <Button
+                type="primary"
+                size="large"
+                icon={<DownloadOutlined />}
+                onClick={handleDownloadAll}
+                className="w-full"
+                style={{ backgroundColor: '#722ed1', borderColor: '#722ed1' }}
+              >
+                Download All (all_translations.json)
+              </Button>
+            </Space>
           </div>
 
           <Divider>Hoặc tải từng file riêng</Divider>
@@ -319,34 +419,64 @@ declare global {
               Phù hợp khi bạn cần sử dụng từng file độc lập trong dự án.
             </Paragraph>
             <Space direction="vertical" size="middle" className="w-full">
-              <Button
-                type="primary"
-                icon={<DownloadOutlined />}
-                onClick={() => handleDownload('en', 'EN.json')}
-                className="w-full"
-              >
-                Download EN.json (English)
-              </Button>
+              <Space className="w-full">
+                <Button
+                  type="default"
+                  icon={<FileTextOutlined />}
+                  onClick={() => handlePreview('en', 'EN.json')}
+                  style={{ flex: 1 }}
+                >
+                  Preview
+                </Button>
+                <Button
+                  type="primary"
+                  icon={<DownloadOutlined />}
+                  onClick={() => handleDownload('en', 'EN.json')}
+                  style={{ flex: 2 }}
+                >
+                  Download EN.json (English)
+                </Button>
+              </Space>
               
-              <Button
-                type="primary"
-                danger
-                icon={<DownloadOutlined />}
-                onClick={() => handleDownload('jp', 'JP.json')}
-                className="w-full"
-              >
-                Download JP.json (Japanese)
-              </Button>
+              <Space className="w-full">
+                <Button
+                  type="default"
+                  icon={<FileTextOutlined />}
+                  onClick={() => handlePreview('jp', 'JP.json')}
+                  style={{ flex: 1 }}
+                >
+                  Preview
+                </Button>
+                <Button
+                  type="primary"
+                  danger
+                  icon={<DownloadOutlined />}
+                  onClick={() => handleDownload('jp', 'JP.json')}
+                  style={{ flex: 2 }}
+                >
+                  Download JP.json (Japanese)
+                </Button>
+              </Space>
               
-              <Button
-                type="primary"
-                icon={<DownloadOutlined />}
-                onClick={() => handleDownload('malay', 'Malay.json')}
-                className="w-full"
-                style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
-              >
-                Download Malay.json (Malay)
-              </Button>
+              <Space className="w-full">
+                <Button
+                  type="default"
+                  icon={<FileTextOutlined />}
+                  onClick={() => handlePreview('malay', 'Malay.json')}
+                  style={{ flex: 1 }}
+                >
+                  Preview
+                </Button>
+                <Button
+                  type="primary"
+                  icon={<DownloadOutlined />}
+                  onClick={() => handleDownload('malay', 'Malay.json')}
+                  className="w-full"
+                  style={{ flex: 2, backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+                >
+                  Download Malay.json (Malay)
+                </Button>
+              </Space>
             </Space>
           </div>
 
@@ -405,18 +535,77 @@ declare global {
               <br />
               <strong>💡 Lưu ý:</strong> Nếu bạn muốn tự động hóa trong CI/CD hoặc build process, hãy dùng cách "Export cho Type Generation" ở trên và chạy script Node.js.
             </Paragraph>
-            <Button
-              type="default"
-              size="large"
-              icon={<FileTextOutlined />}
-              onClick={handleDownloadTypeDefinition}
-              className="w-full"
-              style={{ backgroundColor: '#52c41a', borderColor: '#52c41a', color: 'white' }}
-            >
-              📥 Download translations.d.ts (Từ localStorage - Không cần Node.js)
-            </Button>
+            <Space className="w-full" direction="vertical">
+              <Button
+                type="default"
+                size="large"
+                icon={<FileTextOutlined />}
+                onClick={() => handlePreview('types', 'translations.d.ts')}
+                className="w-full"
+              >
+                👁️ Preview
+              </Button>
+              <Button
+                type="default"
+                size="large"
+                icon={<FileTextOutlined />}
+                onClick={handleDownloadTypeDefinition}
+                className="w-full"
+                style={{ backgroundColor: '#52c41a', borderColor: '#52c41a', color: 'white' }}
+              >
+                📥 Download translations.d.ts (Từ localStorage - Không cần Node.js)
+              </Button>
+            </Space>
           </div>
         </Space>
+      </Modal>
+
+      {/* Preview Modal */}
+      <Modal
+        title={`📄 Preview: ${previewModal.fileName}`}
+        open={previewModal.open}
+        onCancel={() => setPreviewModal({ ...previewModal, open: false })}
+        footer={[
+          <Button key="close" onClick={() => setPreviewModal({ ...previewModal, open: false })}>
+            Đóng
+          </Button>,
+          <Button
+            key="download"
+            type="primary"
+            icon={<DownloadOutlined />}
+            onClick={() => {
+              const jsonString = previewModal.type === 'json'
+                ? JSON.stringify(previewModal.data, null, 2)
+                : previewModal.data;
+              const blob = new Blob(
+                [jsonString],
+                { type: previewModal.type === 'json' ? 'application/json;charset=utf-8' : 'text/typescript;charset=utf-8' }
+              );
+              saveAs(blob, previewModal.fileName);
+              message.success(`Đã tải xuống ${previewModal.fileName}`);
+              setPreviewModal({ ...previewModal, open: false });
+            }}
+          >
+            Download
+          </Button>,
+        ]}
+        width={800}
+      >
+        <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
+          <pre style={{ 
+            background: '#f5f5f5', 
+            padding: '16px', 
+            borderRadius: '4px',
+            fontSize: '12px',
+            lineHeight: '1.5',
+            margin: 0
+          }}>
+            {previewModal.type === 'json' 
+              ? JSON.stringify(previewModal.data, null, 2)
+              : previewModal.data
+            }
+          </pre>
+        </div>
       </Modal>
     </>
   );

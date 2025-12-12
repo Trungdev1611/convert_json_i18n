@@ -2,7 +2,7 @@
 //khi upload xong sẽ được lưu vào localstorage
 //để cập nhật dữ liệu mới nhất nếu có vào localstorage- nếu không thì sẽ dùng dữ liệu localstorage- người dùng lựa chọn file eng, jp hay malay 
 import { useState, useRef } from 'react';
-import { Card, Button, Modal, message, Space, Typography, Alert } from 'antd';
+import { Card, Button, Modal, message, Space, Typography, Alert, Collapse } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { saveLanguage, hasInitialData } from '../utils/storage';
 import type { Language } from '../utils/storage';
@@ -83,21 +83,26 @@ const UploadJson = () => {
           </Button>
         }
       >
-        <Alert
-          message="Mô tả chức năng"
-          description={
-            <Paragraph className="mb-0 text-sm">
-              Upload dữ liệu trong json lên nếu có để đồng bộ mới
-            </Paragraph>
-          }
-          type="info"
-          showIcon
+        <Collapse
+          items={[
+            {
+              key: '1',
+              label: 'ℹ️ Mô tả chức năng',
+              children: (
+                <Paragraph className="mb-0 text-sm">
+                  Upload dữ liệu trong json lên nếu có để đồng bộ mới
+                </Paragraph>
+              ),
+            },
+          ]}
+          size="small"
+          ghost
         />
 
         {isUploaded && (
           <Alert
             message="Đã có dữ liệu"
-            description="Đã có dữ liệu trong localStorage. Bạn có thể upload lại để thay thế."
+            description="Đã có dữ liệu cũ được lưu. Bạn có thể upload lại để thay thế."
             type="success"
             showIcon
             className="mt-4"

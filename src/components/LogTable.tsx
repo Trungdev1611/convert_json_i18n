@@ -1,8 +1,8 @@
-import { Card, Table, Tag, Space, Statistic, Typography, Alert } from 'antd';
+import { Card, Table, Tag, Space, Statistic, Typography, Alert, Tooltip, Collapse } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { ChangeRecord } from '../utils/types';
 
-const { Paragraph } = Typography;
+const { Paragraph, Text } = Typography;
 
 interface LogTableProps {
   changes: ChangeRecord[];
@@ -19,6 +19,67 @@ const LogTable = ({ changes }: LogTableProps) => {
       return 0;
     });
 
+  // Render cell với cảnh báo cho updated
+  const renderCellWithUpdate = (record: ChangeRecord, field: 'en' | 'jp' | 'malay', newValue: string) => {
+    if (record.status === 'updated') {
+      const oldValue = record[`old${field.charAt(0).toUpperCase() + field.slice(1)}` as 'oldEn' | 'oldJp' | 'oldMalay'];
+      const hasChanged = oldValue !== undefined && oldValue !== newValue;
+      
+      if (hasChanged) {
+        return (
+          <Tooltip
+            title={
+              <div style={{ color: '#000' }}>
+                <div style={{ marginBottom: '12px' }}>
+                  <Text strong style={{ color: '#ff4d4f', display: 'block', marginBottom: '4px' }}>Dữ liệu cũ:</Text>
+                  <div style={{ 
+                    marginTop: '4px', 
+                    padding: '8px', 
+                    background: '#fff1f0', 
+                    borderRadius: '4px',
+                    border: '1px solid #ffccc7',
+                    color: '#000'
+                  }}>
+                    {oldValue ? <span style={{ color: '#000' }}>{oldValue}</span> : <span style={{ color: '#999' }}>(trống)</span>}
+                  </div>
+                </div>
+                <div>
+                  <Text strong style={{ color: '#52c41a', display: 'block', marginBottom: '4px' }}>Dữ liệu mới:</Text>
+                  <div style={{ 
+                    marginTop: '4px', 
+                    padding: '8px', 
+                    background: '#f6ffed', 
+                    borderRadius: '4px',
+                    border: '1px solid #b7eb8f',
+                    color: '#000'
+                  }}>
+                    {newValue ? <span style={{ color: '#000' }}>{newValue}</span> : <span style={{ color: '#999' }}>(trống)</span>}
+                  </div>
+                </div>
+              </div>
+            }
+            placement="topLeft"
+            overlayStyle={{ maxWidth: '400px' }}
+          >
+            <div style={{ position: 'relative' }}>
+              <span style={{ color: '#52c41a', fontWeight: 500 }}>{newValue || <span className="text-gray-400">-</span>}</span>
+              <span style={{ 
+                display: 'inline-block', 
+                width: '8px', 
+                height: '8px', 
+                borderRadius: '50%', 
+                background: '#ff4d4f', 
+                marginLeft: '6px',
+                verticalAlign: 'middle'
+              }} title="Đã thay đổi" />
+            </div>
+          </Tooltip>
+        );
+      }
+    }
+    return newValue || <span className="text-gray-400">-</span>;
+  };
+
   const columns: ColumnsType<ChangeRecord> = [
     {
       title: 'Key',
@@ -33,21 +94,21 @@ const LogTable = ({ changes }: LogTableProps) => {
       dataIndex: 'en',
       key: 'en',
       ellipsis: true,
-      render: (text: string) => text || <span className="text-gray-400">-</span>,
+      render: (text: string, record: ChangeRecord) => renderCellWithUpdate(record, 'en', text),
     },
     {
       title: 'Japanese',
       dataIndex: 'jp',
       key: 'jp',
       ellipsis: true,
-      render: (text: string) => text || <span className="text-gray-400">-</span>,
+      render: (text: string, record: ChangeRecord) => renderCellWithUpdate(record, 'jp', text),
     },
     {
       title: 'Malay',
       dataIndex: 'malay',
       key: 'malay',
       ellipsis: true,
-      render: (text: string) => text || <span className="text-gray-400">-</span>,
+      render: (text: string, record: ChangeRecord) => renderCellWithUpdate(record, 'malay', text),
     },
     {
       title: 'Trạng thái',
@@ -96,22 +157,27 @@ const LogTable = ({ changes }: LogTableProps) => {
       }
     >
       <Space direction="vertical" size="middle" className="w-full">
-        <Alert
-          message="Mô tả chức năng"
-          description={
-            <Paragraph className="mb-0 text-sm">
-              <strong>Hiển thị thay đổi:</strong> Bảng này chỉ hiển thị các key mới được thêm (Added) và các key đã được cập nhật (Updated). 
-              Các key không thay đổi sẽ không được hiển thị.
-              <br />
-              <strong>Trạng thái:</strong>
-              <br />
-              • <strong>➕ Added:</strong> Key mới được thêm vào từ file Excel (màu xanh nhẹ)
-              <br />
-              • <strong>🔄 Updated:</strong> Key đã tồn tại nhưng giá trị đã được cập nhật (màu cam cảnh báo)
-            </Paragraph>
-          }
-          type="info"
-          showIcon
+        <Collapse
+          items={[
+            {
+              key: '1',
+              label: 'ℹ️ Mô tả chức năng',
+              children: (
+                <Paragraph className="mb-0 text-sm">
+                  <strong>Hiển thị thay đổi:</strong> Bảng này chỉ hiển thị các key mới được thêm (Added) và các key đã được cập nhật (Updated). 
+                  Các key không thay đổi sẽ không được hiển thị.
+                  <br />
+                  <strong>Trạng thái:</strong>
+                  <br />
+                  • <strong>➕ Added:</strong> Key mới được thêm vào từ file Excel (màu xanh nhẹ)
+                  <br />
+                  • <strong>🔄 Updated:</strong> Key đã tồn tại nhưng giá trị đã được cập nhật (màu cam cảnh báo). Hover vào giá trị để xem dữ liệu cũ và mới.
+                </Paragraph>
+              ),
+            },
+          ]}
+          size="small"
+          ghost
         />
 
         {filteredChanges.length === 0 ? (

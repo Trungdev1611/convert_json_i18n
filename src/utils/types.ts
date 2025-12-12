@@ -8,5 +8,9 @@ export interface ChangeRecord {
   jp: string;
   malay: string;
   status: ChangeStatus;
+  // Dữ liệu cũ cho các trường hợp updated
+  oldEn?: string;
+  oldJp?: string;
+  oldMalay?: string;
 }
 

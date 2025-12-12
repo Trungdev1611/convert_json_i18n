@@ -52,3 +52,37 @@ export const hasInitialData = (): boolean => {
          Object.keys(translations.malay).length > 0;
 };
 
+// Xóa tất cả dữ liệu trong localStorage
+export const clearTranslations = (): void => {
+  localStorage.removeItem(STORAGE_KEY);
+};
+
+// Undo functionality
+const UNDO_STORAGE_KEY = 'i18n_translations_undo';
+
+// Lưu snapshot trước khi thay đổi (để undo)
+export const saveUndoSnapshot = (translations: AllTranslations): void => {
+  localStorage.setItem(UNDO_STORAGE_KEY, JSON.stringify(translations));
+};
+
+// Lấy snapshot để undo
+export const getUndoSnapshot = (): AllTranslations | null => {
+  const stored = localStorage.getItem(UNDO_STORAGE_KEY);
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+};
+
+// Xóa snapshot sau khi undo
+export const clearUndoSnapshot = (): void => {
+  localStorage.removeItem(UNDO_STORAGE_KEY);
+};
+
+// Kiểm tra có thể undo không
+export const canUndo = (): boolean => {
+  return getUndoSnapshot() !== null;
+};
+
