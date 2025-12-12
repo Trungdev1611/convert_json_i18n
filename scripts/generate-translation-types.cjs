@@ -2,7 +2,7 @@
 /**
  * Generate TypeScript types from JSON translation files
  * No external dependencies required - uses Node.js built-in modules only
- * 
+ *
  * Usage:
  *   node scripts/generate-translation-types.cjs
  *   node scripts/generate-translation-types.cjs --watch
@@ -32,11 +32,11 @@ const OUTPUT_FILE = path.join(OUTPUT_DIR, config.outputFile);
 
 function flattenKeys(obj, prefix = '') {
   const keys = [];
-  
+
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const fullKey = prefix ? `${prefix}.${key}` : key;
-      
+
       if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
         // Nested object - recurse
         keys.push(...flattenKeys(obj[key], fullKey));
@@ -46,7 +46,7 @@ function flattenKeys(obj, prefix = '') {
       }
     }
   }
-  
+
   return keys.sort(); // Sort alphabetically
 }
 
@@ -54,21 +54,21 @@ function generateTypes(config) {
   try {
     // Read source locale JSON
     const sourceJsonPath = path.join(LOCALES_DIR, `${config.sourceLocale}.json`);
-    
+
     if (!fs.existsSync(sourceJsonPath)) {
       throw new Error(`Source locale file not found: ${sourceJsonPath}`);
     }
-    
+
     const sourceJson = JSON.parse(fs.readFileSync(sourceJsonPath, 'utf8'));
-    
+
     // Flatten keys
     const keys = flattenKeys(sourceJson);
-    
+
     if (keys.length === 0) {
       console.warn('⚠️  No translation keys found');
       return;
     }
-    
+
     // Generate type definition
     const typeDefinition = `// Auto-generated file. Do not edit manually.
 // Generated at: ${new Date().toISOString()}
@@ -76,10 +76,10 @@ function generateTypes(config) {
 // Config: ${CONFIG_PATH}
 
 export type TranslationKey = 
-${keys.map(key => `  | '${key}'`).join('\n')};
+${keys.map((key) => `  | '${key}'`).join('\n')};
 
 // Union type for easier use
-export type TranslationKeyUnion = ${keys.map(key => `'${key}'`).join(' | ')};
+export type TranslationKeyUnion = ${keys.map((key) => `'${key}'`).join(' | ')};
 
 // Module augmentation cho react-i18next (tự động gợi ý khi dùng useTranslation)
 declare module 'react-i18next' {
@@ -93,16 +93,21 @@ declare module 'react-i18next' {
 
 // Module augmentation cho next-intl (tự động gợi ý khi dùng useTranslations)
 declare module 'next-intl' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface Messages extends Record<TranslationKey, string> {}
 }
 
-${config.namespace ? `
+${
+  config.namespace
+    ? `
 declare module '${config.namespace}' {
   interface Messages {
     [key: string]: any;
   }
 }
-` : ''}
+`
+    : ''
+}
 
 // Global type declaration (optional)
 declare global {
@@ -119,13 +124,12 @@ declare global {
 
     // Write file
     fs.writeFileSync(OUTPUT_FILE, typeDefinition, 'utf8');
-    
+
     console.log(`✅ Generated ${keys.length} translation keys`);
     console.log(`📁 Source: ${sourceJsonPath}`);
     console.log(`📝 Output: ${OUTPUT_FILE}`);
     console.log(`\n💡 Usage:`);
     console.log(`   import type { TranslationKey } from '@/types/translations';`);
-    
   } catch (error) {
     console.error('❌ Error generating types:', error.message);
     process.exit(1);
@@ -135,14 +139,14 @@ declare global {
 // Watch mode using fs.watch (built-in)
 function watchMode(config) {
   console.log('\n👀 Watching for changes... (Press Ctrl+C to stop)');
-  
+
   fs.watch(LOCALES_DIR, { recursive: false }, (eventType, filename) => {
     if (filename && filename.endsWith('.json')) {
       console.log(`\n📝 ${filename} changed, regenerating...`);
       generateTypes(config);
     }
   });
-  
+
   // Also watch the directory itself
   fs.watchFile(path.join(LOCALES_DIR, `${config.sourceLocale}.json`), { interval: 1000 }, () => {
     console.log(`\n📝 ${config.sourceLocale}.json changed, regenerating...`);
@@ -153,7 +157,7 @@ function watchMode(config) {
 // Main execution
 function main() {
   generateTypes(config);
-  
+
   // Watch mode (optional)
   if (config.enableWatch && process.argv.includes('--watch')) {
     watchMode(config);
@@ -166,4 +170,3 @@ if (require.main === module) {
 }
 
 module.exports = { generateTypes, flattenKeys };
-

@@ -1,5 +1,5 @@
 // Auto-generated file. Do not edit manually.
-// Generated at: 2025-12-12T02:20:50.590Z
+// Generated at: 2025-12-12T04:19:19.095Z
 // Run: node scripts/generate-translation-types.cjs
 // Config: /Users/macbookairm1/Documents/netko_trung/code/nestjs/sync_excel_json_in_fe/i18n-tool/scripts/config.json
 

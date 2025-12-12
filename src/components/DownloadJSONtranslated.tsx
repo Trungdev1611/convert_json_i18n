@@ -631,10 +631,15 @@ declare global {
             type="primary"
             icon={<DownloadOutlined />}
             onClick={() => {
-              const jsonString =
-                previewModal.type === 'json'
-                  ? JSON.stringify(previewModal.data, null, 2)
-                  : previewModal.data;
+              let jsonString: string;
+              if (previewModal.type === 'json') {
+                jsonString = JSON.stringify(previewModal.data, null, 2);
+              } else {
+                jsonString =
+                  typeof previewModal.data === 'string'
+                    ? previewModal.data
+                    : JSON.stringify(previewModal.data, null, 2);
+              }
               const blob = new Blob([jsonString], {
                 type:
                   previewModal.type === 'json'
@@ -664,7 +669,9 @@ declare global {
           >
             {previewModal.type === 'json'
               ? JSON.stringify(previewModal.data, null, 2)
-              : previewModal.data}
+              : typeof previewModal.data === 'string'
+                ? previewModal.data
+                : JSON.stringify(previewModal.data, null, 2)}
           </pre>
         </div>
       </Modal>
