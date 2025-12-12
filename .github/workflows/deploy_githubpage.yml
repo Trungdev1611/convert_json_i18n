@@ -18,7 +18,9 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install   
+        run: npm install
+        env:
+          HUSKY: 0   
 
       - name: Generate translation types
         run: node scripts/generate-translation-types.cjs
